@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				autoDrawBackground="false"
+				width="100%"
+				xmlns:controls="qs.controls.*">
+	<fx:Script>
+		<![CDATA[
+			protected function image1_httpStatusHandler(event:HTTPStatusEvent):void
+			{
+				if (event.status == 404)
+				{
+					img.includeInLayout=img.visible=false;
+					img404.includeInLayout=img404.visible=true;
+				}
+			}
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="hovered"/>
+		<s:State name="selected"/>
+	</s:states>
+	<s:Rect id="bgRect"
+			width="100%"
+			height="100%">
+		<s:fill>
+			<s:SolidColor color="0"
+						  alpha.hovered="1"
+						  alpha="0.65"/>
+		</s:fill>
+	</s:Rect>
+	<s:HGroup width="100%"
+			  height="100%"
+			  paddingBottom="5"
+			  paddingLeft="5"
+			  paddingRight="15"
+			  paddingTop="5"
+			  verticalAlign="middle">
+		<controls:SuperImage id="img404"
+							 width="44"
+							 height="44"
+							 visible="false"
+							 includeInLayout="false"
+							 source="@Embed('20408.jpg')"/>
+		<controls:SuperImage id="img"
+							 maintainAspectRatio="true"
+							 source="{data.authorThumbURL}"
+							 httpStatus="image1_httpStatusHandler(event)"/>
+		<s:VGroup id="labels"
+				  width="100%"
+				  paddingTop="5"
+				  gap="2">
+			<s:Label text="{data.authorName.toUpperCase()}"
+					 fontSize="11"
+					 color="white"
+					 fontWeight="bold"
+					 width="100%"/>
+			<s:Label text="{data.content}"
+					 fontSize="12"
+					 color="#CDCDCD"
+					 maxDisplayedLines="10"
+					 width="100%"
+					 showTruncationTip="true"/>
+			<s:Spacer height="1"/>
+			<s:Line width="100%">
+				<s:stroke>
+					<s:SolidColorStroke color="0x333333"
+										weight="1"
+										caps="square"/>
+				</s:stroke>
+			</s:Line>
+		</s:VGroup>
+	</s:HGroup>
+</s:ItemRenderer>

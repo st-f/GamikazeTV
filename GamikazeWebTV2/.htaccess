@@ -1,0 +1,7 @@
+Options +FollowSymLinks -MultiViews
+# Turn mod_rewrite on
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{QUERY_STRING} ^([a-z0-9-]+)$ [NC]
+RewriteRule ^$ /#!/videos:%1? [L,R=301,NE]

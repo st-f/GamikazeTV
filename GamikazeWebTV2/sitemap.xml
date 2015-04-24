@@ -1,0 +1,22 @@
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://gamikaze.tv/#/live</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+    <url>
+    <loc>http://gamikaze.tv/#/comment</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+    <url>
+        <loc>http://gamikaze.tv/#/videos</loc>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>http://gamikaze.tv/#/share</loc>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+</urlset> 

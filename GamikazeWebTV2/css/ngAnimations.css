@@ -1,0 +1,32 @@
+/* ng-animate */
+.element-enter-setup, .element-leave-setup {
+    -webkit-transition: all linear .2s;
+    -moz-transition: all linear .3s;
+    -ms-transition: all linear .3s;
+    -o-transition: all linear .3s;
+    transition: all linear .3s;
+}
+.element-enter-setup {
+    opacity: 0;
+    margin-top: -8px;
+    margin-bottom: -8px;
+    letter-spacing: 10px;
+}
+.element-enter-start {
+    opacity: 1;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    letter-spacing: normal;
+}
+.element-leave-setup {
+    opacity: 1;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    letter-spacing: normal;
+}
+.element-leave-start {
+    opacity: 0;
+    margin-top: -8px;
+    margin-bottom: -8px;
+    letter-spacing: -10px;
+}

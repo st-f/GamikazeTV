@@ -1,0 +1,50 @@
+#container .youtubeListRenderTd {
+    box-shadow: inset 0px 3px 10px rgba(0, 0, 0, 0.9);
+    padding: 0;
+    vertical-align: middle;
+    float:left;
+    width: 100%;
+    background-color: #333333;
+    color: white;
+    font-weight: normal;
+    border-top: 1px solid #3f3f3f;
+}
+
+#container .videoItemActive {
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.9);
+    background-color: yellow;
+    color: #000000;
+}
+
+.youtubeDiv img {
+    float: left;
+    padding-left: 10px;
+    width:120px;
+    height:90px;
+}
+
+.youtubeDiv span {
+    display: table-cell;
+    width: 210px;
+    height: 90px;
+    padding-left: 20px;
+    padding-right: 20px;
+    vertical-align: middle;
+    line-height: 18px;
+    font-size: 16px;
+    font-family: 'Alef', sans-serif;
+}
+
+@media screen and (max-width: 840px) {
+    .youtubeDiv img {
+        padding-left: 0;
+        width:0;
+        height:0;
+    }
+    .youtubeDiv span {
+        padding-left: 15px;
+        padding-right: 15px;
+        /*width: 100%;*/
+        text-align: center;
+    }
+}

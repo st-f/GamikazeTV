@@ -1,0 +1,71 @@
+/*.logo{*/
+/*position: absolute;*/
+/*}*/
+
+#topnav .row {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    vertical-align: middle;
+    background-color: transparent;
+}
+
+#topnav {
+    padding: 0px;
+    border: none;
+}
+
+#topnavOpenSidebarBtn {
+    margin: 0;
+}
+
+#taglineDiv {
+    text-transform: uppercase;
+    font-family: 'Alef', sans-serif;
+    font-size: 12px;
+    color: rgba(255, 255, 0, 0.5);
+    padding-top: 2px;
+}
+
+#topnav H2 {
+    line-height: 15px;
+}
+
+#topnav {
+    padding: 10px;
+    padding-left: 15px;
+    height: 40px;
+}
+
+#topnav .logoDiv {
+    background-image: url("../img/logo.png");
+    margin-left: 5px;
+    margin-right: 10px;
+    margin-top: 5px;
+    width: 250px;
+    height: 36px;
+}
+
+.topBarContainerFloatLeft {
+    float: left;
+}
+
+.amazonBuyButton {
+    float: right;
+    margin-right: 120px;
+    margin-top: 7px;
+}
+
+@media screen and (max-width: 840px) {
+    #topnav {
+        max-height: 35px;
+        overflow: hidden;
+    }
+
+    #topnav .logoDiv {
+        background-image: url("../img/logo-small.png");
+        min-width: 70px;
+        min-height: 30px;
+        width: 70px;
+        height: 30px;
+    }
+}

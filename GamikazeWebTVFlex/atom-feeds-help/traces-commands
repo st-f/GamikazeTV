@@ -1,0 +1,7 @@
+/*trace("0", xml.children()[22]);
+				trace("1", xml.inScopeNamespaces());
+				trace("2", xml..media::group);
+				trace("3", xml..yt::statistics.@favoriteCount);
+				trace("4", xml..yt::duration.@seconds);
+				trace("5", xml..author); // why?????????
+				trace("6", xml.author); // why?????????*/

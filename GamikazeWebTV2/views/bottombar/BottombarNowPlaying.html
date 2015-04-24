@@ -1,0 +1,10 @@
+<div id="bottomBarNowPlaying" class="bottombar">
+    <div class="bottombarFloatLeft bottombarImageDiv">
+        <img src="{{currentVideo.media$group.media$thumbnail[0].url}}" class="img-polaroid ytthumbnail">
+    </div>
+    <div class="bottombarTextDiv">
+        <h2>{{currentVideo.title.$t}}</h2>
+        <p>{{currentVideo.media$group.media$description.$t}}</p>
+        <!-- {{currentVideo.yt$statistics.viewCount}} -->
+    </div>
+</div>

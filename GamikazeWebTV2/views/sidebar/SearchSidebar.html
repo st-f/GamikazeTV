@@ -1,0 +1,21 @@
+<br>
+<form ng-submit="searchInGamikazeVideos(searchTerm)">
+    <div class="form-horizontal">
+        <!--<h2>{{searchTerm}}</h2>-->
+        <input type="text" ng-model="searchTerm" placeholder="Type a search here.">
+        <button class="btn"><i class="icon-search"></i>  SEARCH</button>
+    </div>
+</form>
+<div style="padding: 20px;" ng-show="isSearchingYoutube == true">
+    <img src="img/257.gif" />
+</div>
+<div class="youtubeDiv containerScroll">
+    <table class="table table-striped">
+        <tr id="{{vid.media$group.yt$videoid.$t}}" ng-repeat="vid in videoSearchResults" data-ng-click="loadVideo(vid)">
+            <td ng-class="getSelectedVideo(vid.media$group.yt$videoid.$t)" class="youtubeListRenderTd">
+                <img class="youtubeListThumb" ng-src="{{vid.media$group.media$thumbnail[0].url}}">
+                <span>{{vid.title.$t}}</span>
+            </td>
+        </tr>
+    </table>
+</div>

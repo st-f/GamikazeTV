@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="50%"
+		 height="110"
+		 fontFamily="Geneva">
+
+	<fx:Script>
+		<![CDATA[
+			import flash.desktop.Clipboard;
+			import flash.desktop.ClipboardFormats;
+
+			protected function img_clickHandler(event:MouseEvent):void
+			{
+				Clipboard.generalClipboard.setData(ClipboardFormats.TEXT_FORMAT, logLabel.text);
+			}
+
+			protected function img_completeHandler(event:Event):void
+			{
+				img.visible=true;
+			}
+
+			protected function img_httpStatusHandler(event:HTTPStatusEvent):void
+			{
+				trace(event.status);
+				imgContainer.visible=true;
+			}
+		]]>
+	</fx:Script>
+
+	<fx:Declarations>
+		<s:SolidColorStroke id="squarestroke"
+							color="white"
+							joints="miter"
+							weight="3"
+							caps="square"/>
+	</fx:Declarations>
+	<s:Rect width="100%"
+			height="100"
+			bottom="0">
+		<s:fill>
+			<s:SolidColor color="#000000"
+						  alpha="0.65"/>
+		</s:fill>
+	</s:Rect>
+	<s:HGroup width="100%"
+			  bottom="0"
+			  verticalAlign="middle"
+			  paddingBottom="10"
+			  paddingLeft="10"
+			  paddingRight="10"
+			  paddingTop="10"
+			  gap="20">
+		<s:BorderContainer id="imgContainer"
+						   borderStroke="{squarestroke}"
+						   visible="false">
+			<mx:Image id="img"
+					  width="120"
+					  height="90"
+					  httpStatus="img_httpStatusHandler(event)"
+					  click="img_clickHandler(event)"
+					  buttonMode="true"/>
+			<!--<s:Label text="LOADING"
+					 maxDisplayedLines="2"
+					 fontSize="12"
+					 verticalCenter="0"
+					 horizontalCenter="0"
+					 color="#222222"
+					 width="100%"
+					 showTruncationTip="true"/>-->
+		</s:BorderContainer>
+		<s:VGroup width="100%"
+				  paddingBottom="5"
+				  paddingLeft="5"
+				  paddingRight="5"
+				  paddingTop="20"
+				  useHandCursor="true"
+				  gap="8"
+				  color="white">
+			<s:Label id="label"
+					 text="Loading..."
+					 maxDisplayedLines="2"
+					 showTruncationTip="true"
+					 width="100%"
+					 fontSize="18"/>
+			<s:Label id="descriptionLabel"
+					 maxDisplayedLines="2"
+					 fontSize="12"
+					 color="#999999"
+					 width="100%"
+					 showTruncationTip="true"/>
+			<s:Label id="logLabel"
+					 visible="false"
+					 includeInLayout="false"
+					 color="#CCCCCC"
+					 fontSize="11"/>
+		</s:VGroup>
+	</s:HGroup>
+</s:Group>

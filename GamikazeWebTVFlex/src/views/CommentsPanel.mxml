@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  width="30%"
+		  maxWidth="400"
+		  height="100%"
+		  paddingBottom="10"
+		  paddingLeft="10"
+		  paddingRight="10"
+		  paddingTop="10"
+		  gap="10"
+		  visible="{comments}"
+		  horizontalAlign="center"
+		  xmlns:views="views.*">
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.utils.ArrayUtil;
+			import com.facebook.graph.Facebook;
+
+			import events.ChatEvent;
+
+			import models.GamikazeUserVO;
+			import models.YoutubeCommentVO;
+
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectProxy;
+
+			import spark.components.Application;
+
+			[Bindable]
+			public var commentsURL:String;
+
+			[Bindable]
+			public var comments:ArrayCollection;
+
+			[Bindable]
+			public var fblogged:Boolean=false;
+
+			public var oldResult:ArrayCollection;
+
+			private static const FB_APP_ID:String="514569015253582";
+
+			private function onServiceResult(event:ResultEvent):void
+			{
+				try
+				{
+					if (comments)
+					{
+						var isEqual:Boolean=true;
+						for (var i:uint=0; i < event.result.feed.entry.length; i++)
+						{
+							trace("event.result.feed.entry[i].content: " + event.result.feed.entry[i].content + " oldResult[i].content: " + comments[i].content)
+							if (event.result.feed.entry[i].content != comments[i].content)
+							{
+								isEqual=false;
+								break;
+							}
+						}
+					}
+					trace("isEqual? " + isEqual);
+					if (!isEqual)
+					{
+						comments=new ArrayCollection();
+						var comment:YoutubeCommentVO;
+						for each (var obj:ObjectProxy in event.result.feed.entry)
+						{
+							comment=new YoutubeCommentVO(obj);
+							comments.addItem(comment);
+						}
+					}
+				}
+				catch (error:Error)
+				{
+					trace("WHAT THE FUDGE");
+				}
+			}
+
+			private function onTimer(event:TimerEvent):void
+			{
+				//comments=new ArrayCollection();
+				loadComments();
+			}
+
+			public function loadComments():void
+			{
+				trace("load comments at " + commentsURL);
+				service.send();
+			}
+
+			private function onChatMessageReceived(event:ChatEvent):void
+			{
+				if (comments)
+				{
+					comments.addItemAt(event.comment, 0);
+				}
+			}
+
+
+			///FB
+
+			private function onClick(event:MouseEvent):void
+			{
+				var opts:Object={scope: "publish_actions,friends_games_activity"};
+				Facebook.init(FB_APP_ID, onWebInit);
+				Facebook.login(onWebLogin, opts);
+			}
+
+			private function onWebInit(result:Object, fail:Object):void
+			{
+				trace("onWebInit, result: " + result);
+			}
+
+			private function onWebLogin(result:Object, fail:Object):void
+			{
+				if (result)
+				{
+					FlexGlobals.topLevelApplication.myself.fbToken=result.accessToken;
+					getProfile();
+				}
+				if (fail)
+				{
+					trace("onWebLogin, FAIL: " + fail);
+				}
+			}
+
+			private function getProfile():void
+			{
+				Facebook.api("/me", handleGetProfile);
+			}
+
+			/*first_name	"Iance"
+gender	"female"
+id	"100005091121469"
+last_name	"Armstrong"
+link	"http://www.facebook.com/iance.armstrong"
+locale	"en_US"
+name	"Iance Armstrong"
+timezone	0
+updated_time	"2013-01-18T18:46:17+0000"
+username	"iance.armstrong"
+*/
+
+			private function handleGetProfile(response:Object, fail:Object):void
+			{
+				if (response)
+				{
+					FlexGlobals.topLevelApplication.myself.displayName=response.name;
+					FlexGlobals.topLevelApplication.myself.fbUID=response.id;
+					FlexGlobals.topLevelApplication.myself.thumbnailURL=Facebook.getImageUrl(response.id, "small");
+					fblogged=true;
+				}
+			}
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:HTTPService id="service"
+					   url="{commentsURL}"
+					   result="onServiceResult(event)"/>
+	</fx:Declarations>
+	<s:HGroup verticalAlign="middle"
+			  horizontalAlign="center"
+			  width="100%">
+		<s:Button label="POST WITH FACEBOOK"
+				  visible="{!fblogged}"
+				  includeInLayout="{!fblogged}"
+				  click="onClick(event)"
+				  chromeColor="#333333"
+				  buttonMode="true"
+				  fontWeight="bold"
+				  height="25"
+				  color="#EEEEEE"
+				  fontSize="12"/>
+		<s:Button label="LIKE"
+				  visible="{fblogged}"
+				  includeInLayout="{fblogged}"
+				  chromeColor="#333333"
+				  buttonMode="true"
+				  fontWeight="bold"
+				  height="25"
+				  color="#EEEEEE"
+				  fontSize="12"/>
+		<s:Button label="SHARE"
+				  visible="{fblogged}"
+				  includeInLayout="{fblogged}"
+				  chromeColor="#333333"
+				  buttonMode="true"
+				  fontWeight="bold"
+				  height="25"
+				  color="#EEEEEE"
+				  fontSize="12"/>
+	</s:HGroup>
+	<views:ChatPanel onMessageReceived="onChatMessageReceived(event)"/>
+	<s:List id="itemsList"
+			width="100%"
+			height="100%"
+			borderVisible="false"
+			contentBackgroundAlpha="0"
+			horizontalScrollPolicy="off"
+			itemRenderer="views.CommentRenderer"
+			cacheAsBitmap="true"
+			useVirtualLayout="false"
+			dataProvider="{comments}">
+		<s:layout>
+			<s:VerticalLayout gap="0"
+							  horizontalAlign="contentJustify"/>
+		</s:layout>
+	</s:List>
+</s:VGroup>

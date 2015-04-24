@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		  xmlns:s="library://ns.adobe.com/flex/spark"
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  creationComplete="vgroup1_creationCompleteHandler(event)"
+		  width="100%">
+	<fx:Metadata>
+		[Event(name="onMessageReceived", type="events.ChatEvent")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import events.ChatEvent;
+
+			import models.YoutubeCommentVO;
+
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+
+			private const SERVER:String="rtmfp://p2p.rtmfp.net/";
+			private const DEVKEY:String="c22bdde4160f1e01dff25faf-755c7f5d7012";
+
+			public var netGroup:NetGroup;
+			private var nc:NetConnection;
+
+			[Bindable]
+			public var user:String;
+
+			[Bindable]
+			public var connected:Boolean=false;
+
+			private function connect():void
+			{
+				nc=new NetConnection();
+				nc.addEventListener(NetStatusEvent.NET_STATUS, netStatus);
+				nc.connect(SERVER + DEVKEY);
+			}
+
+			private function setupGroup():void
+			{
+				var groupspec:GroupSpecifier=new GroupSpecifier("myGroup/g1");
+				groupspec.serverChannelEnabled=true;
+				groupspec.postingEnabled=true;
+				netGroup=new NetGroup(nc, groupspec.groupspecWithAuthorizations());
+				netGroup.addEventListener(NetStatusEvent.NET_STATUS, netStatus);
+				user="user" + Math.round(Math.random() * 10000);
+			}
+
+			private function netStatus(event:NetStatusEvent):void
+			{
+				trace(event.info.code);
+				switch (event.info.code)
+				{
+					case "NetConnection.Connect.Success":
+						setupGroup();
+						break;
+
+					case "NetGroup.Connect.Success":
+						connected=true;
+						break;
+
+					case "NetGroup.Posting.Notify":
+						receiveMessage(event.info.message);
+						break;
+				}
+			}
+
+			private var seq:int=0;
+
+			private function sendMessage():void
+			{
+				var message:Object=new Object();
+				message.sender=netGroup.convertPeerIDToGroupAddress(nc.nearID);
+				message.user=FlexGlobals.topLevelApplication.myself.displayName;
+				message.authorThumbURL=FlexGlobals.topLevelApplication.myself.thumbnailURL;
+				message.text=txtMessage.text;
+				message.sequence=seq++; // *to keep unique
+				netGroup.post(message);
+				receiveMessage(message);
+				txtMessage.text="";
+			}
+
+			private function receiveMessage(message:Object):void
+			{
+				write(message.user + ": " + message.text);
+				const comment:YoutubeCommentVO=new YoutubeCommentVO();
+				comment.content=message.text;
+				comment.authorName=message.user;
+				comment.authorThumbURL=message.authorThumbURL;
+				dispatchEvent(new ChatEvent(ChatEvent.CHAT_EVENT, true, false, comment));
+			}
+
+			private function write(txt:String):void
+			{
+				//txtHistory.text+=txt + "\n";
+			}
+
+			protected function vgroup1_creationCompleteHandler(event:FlexEvent):void
+			{
+				connect();
+			}
+
+			protected function txtMessage_focusInHandler(event:FocusEvent):void
+			{
+				FlexGlobals.topLevelApplication.preventOverlayDisappearance=true;
+			}
+
+			protected function txtMessage_focusOutHandler(event:FocusEvent):void
+			{
+				FlexGlobals.topLevelApplication.preventOverlayDisappearance=false;
+			}
+		]]>
+	</fx:Script>
+	<!--	<s:TextArea width="100%"
+					visible="{comments}"
+					height="50"
+					borderVisible="false"
+					contentBackgroundAlpha="0.15"
+					color="#EEEEEE"
+					paddingBottom="5"
+					paddingLeft="5"
+					paddingRight="5"
+					paddingTop="5"
+					fontSize="14"/>-->
+	<!--<s:TextInput id="txtUser"
+				 text="{user}"
+				 bottom="10"
+				 width="100%"/>-->
+	<s:TextInput id="txtMessage"
+				 focusIn="txtMessage_focusInHandler(event)"
+				 focusOut="txtMessage_focusOutHandler(event)"
+				 bottom="10"
+				 width="100%"
+				 enter="sendMessage()"/>
+	<s:Button label="Send"
+			  width="100%"
+			  click="sendMessage()"
+			  enabled="{connected}"
+			  bottom="10"/>
+</s:VGroup>

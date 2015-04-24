@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:views="views.*"
+			   xmlns:local="*"
+			   initialize="onApplicationInitializeHandler(event)"
+			   creationComplete="applicationCreationCompleteHandler(event)"
+			   resize="onAppResize(event)"
+			   mouseMove="onMouseMove(event)"
+			   backgroundColor="0">
+	<fx:Script>
+		<![CDATA[
+			import flash.utils.setTimeout;
+
+			import models.GamikazeUserVO;
+			import models.PlaylistEntryVO;
+
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.events.ResizeEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+
+			import utils.PlaylistUtils;
+
+			private static const PLAYER_URL:String="http://www.youtube.com/apiplayer?version=3";
+			private static const SECURITY_DOMAIN_YOUTUBE:String="http://www.youtube.com";
+			private static const SECURITY_DOMAIN_GDATA:String="https://gdata.youtube.com";
+			private static const SECURITY_DOMAIN_STF:String="http://st-f.net";
+			private static const STATE_ENDED:Number=0;
+			private static const STATE_PLAYING:Number=1;
+			private static const STATE_PAUSED:Number=2;
+			private static const STATE_CUED:Number=5;
+			//https not working! WTFUU FLASH PLAYER
+			private static const PLAYLIST_URL:String="http://gdata.youtube.com/feeds/api/playlists/PLwY7ehU_hCAEgPCvTpU6I03w_pyUv5crZ?v=2&max-results=50";
+			private static const PLAYLIST_URL_MUSIC:String="http://gdata.youtube.com/feeds/api/playlists/PLxpWFvKvVIYUyElSeJJqbUESCgte_WKdR?v=2&max-results=50"; //MTV LUL
+			private static const PLAYLIST_URL_WTF:String="http://gdata.youtube.com/feeds/api/playlists/PLEA634C2D06674985?v=2&max-results=50"; //WTF
+			private static const SYTIMGCOM:String="s.ytimg.com";
+			private static const IYTIMGCOM:String="i.ytimg.com";
+
+			[Bindable]
+			public var myself:GamikazeUserVO=new GamikazeUserVO();
+
+			[Bindable]
+			public var preventOverlayDisappearance:Boolean=false;
+
+			private var youtubeApiLoader:URLLoader;
+			private var player:Object;
+
+			public var videoIndex:int=0;
+			public var playlist:Vector.<PlaylistEntryVO>;
+			public var currentVideo:PlaylistEntryVO;
+			private var playStarted:Boolean=false;
+
+			private function onApplicationInitializeHandler(event:FlexEvent):void
+			{
+				Security.allowDomain(SECURITY_DOMAIN_YOUTUBE);
+				Security.allowDomain(SECURITY_DOMAIN_GDATA);
+				Security.allowDomain(SYTIMGCOM);
+				Security.allowDomain(IYTIMGCOM);
+			}
+
+			private function onDoubleClick(event:MouseEvent):void
+			{
+				trace("double click")
+				if (stage.displayState == StageDisplayState.NORMAL)
+				{
+					stage.displayState=StageDisplayState.FULL_SCREEN_INTERACTIVE;
+					subtitle.text='ROLLOVER FOR MORE / CLICK TO EXIT FULLSCREEN';
+				}
+				else
+				{
+					stage.displayState=StageDisplayState.NORMAL;
+					subtitle.text='ROLLOVER FOR MORE / CLICK TO FULLSCREEN';
+				}
+			}
+
+			private function applicationCreationCompleteHandler(event:FlexEvent):void
+			{
+				use namespace mx_internal;
+				systemManager.addEventListener(FlexEvent.IDLE, handleIdle, false, 0, true);
+				service.url=PLAYLIST_URL;
+				service.send();
+			}
+
+			private function handleIdle(event:FlexEvent):void
+			{
+				if (event.currentTarget.mx_internal::idleCounter >= 50) //every 100ms so 10s
+				{
+					if (currentState == "overlay")
+					{
+						//Mouse.hide();
+						if (!preventOverlayDisappearance)
+						{
+							currentState="normal";
+						}
+					}
+				}
+			}
+
+			private function loadMusicPlaylist():void
+			{
+				player.stopVideo();
+				playStarted=false;
+				service.url=PLAYLIST_URL_MUSIC;
+				service.send();
+			}
+
+			private function onPlaylistServiceResult(event:ResultEvent):void
+			{
+				trace("onPlaylistServiceResult");
+				playlist=PlaylistUtils.getPlaylistEntries(new XML(event.message.body.toString()));
+				playerLoader.load(PLAYER_URL);
+			}
+
+			private function onPlayerLoaderComplete(event:Event):void
+			{
+				trace("player initialized");
+				playerLoader.content.addEventListener("onReady", onPlayerReady);
+				playerLoader.content.addEventListener("onError", onPlayerError);
+				playerLoader.content.addEventListener("onStateChange", onPlayerStateChange);
+				playerLoader.content.addEventListener("onPlaybackQualityChange", onVideoPlaybackQualityChange);
+			}
+
+			private function onPlayerReady(event:Event):void
+			{
+				trace("onPlayerReady");
+				player=playerLoader.content;
+				/* player.doubleClickEnabled=true;
+				player.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick); */
+				if (player)
+				{
+					player.setSize(this.width, this.height);
+					if (playlist && playlist.length)
+					{
+						startPlaying();
+					}
+				}
+			}
+
+			private function startPlaying():void
+			{
+				if (!playStarted)
+				{
+					trace("startPlaying: " + playStarted);
+					playStarted=true;
+					var playParams:Array=PlaylistUtils.getPlaylistPosition(playlist);
+					videoIndex=playParams[0];
+					basebar.logLabel.text=playParams[2];
+					setUI();
+					try
+					{
+						player.loadVideoById(playlist[videoIndex].id, playParams[1], "hd720");
+					}
+					catch (error:Error)
+					{
+						trace("TA MERE");
+					}
+				}
+			}
+
+			private function setUI():void
+			{
+				basebar.img.source=playlist[videoIndex].thumbUrl;
+				//basebar.label.text=(videoIndex + 1) + " / " + playlist.length + " - " + playlist[videoIndex].title;
+				basebar.label.text=playlist[videoIndex].title;
+				basebar.descriptionLabel.text=playlist[videoIndex].description;
+				commentsPanel.commentsURL=playlist[videoIndex].youtubeCommentsURL + '&max-results=25';
+				commentsPanel.loadComments();
+			}
+
+			private function onPlayerError(event:Event):void
+			{
+				trace("Player error:", Object(event).data);
+			}
+
+			private function onPlayerStateChange(event:Event):void
+			{
+				//trace("State is", Object(event).data);
+				switch (Object(event).data)
+				{
+					case STATE_ENDED:
+						if (videoIndex < playlist.length - 1)
+						{
+							videoIndex++;
+						}
+						else
+						{
+							videoIndex=0;
+						}
+						setUI();
+						player.loadVideoById(playlist[videoIndex].id);
+						trace("NEXT VIDEO");
+						break;
+
+					case STATE_PLAYING:
+						break;
+
+					case STATE_PAUSED:
+						break;
+
+					case STATE_CUED:
+						break;
+				}
+			}
+
+			private function onVideoPlaybackQualityChange(event:Event):void
+			{
+				trace("Current video quality:", Object(event).data);
+			}
+
+			private function service_faultHandler(event:FaultEvent):void
+			{
+				Alert.show("error: " + event.message);
+			}
+
+			private function onAppResize(event:ResizeEvent):void
+			{
+				if (player)
+				{
+					player.setSize(this.width, this.height);
+				}
+			}
+
+			private function onMouseMove(event:MouseEvent):void
+			{
+				//trace("mouse move")
+				if (this.currentState == "normal")
+				{
+					//Mouse.show();
+					this.currentState="overlay";
+				}
+			}
+		]]>
+	</fx:Script>
+	<fx:Style>
+		@namespace s "library://ns.adobe.com/flex/spark";
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		
+		s|List s|Scroller {
+			skinClass: ClassReference("skins.SlimScrollerSkin");
+		}
+	</fx:Style>
+	<fx:Declarations>
+		<s:HTTPService id="service"
+					   fault="service_faultHandler(event)"
+					   result="onPlaylistServiceResult(event)"/>
+		<s:DropShadowFilter id="rolloverShadow"
+							blurX="0"
+							blurY="0"
+							distance="1"/>
+	</fx:Declarations>
+	<s:transitions>
+		<s:Transition fromState="normal"
+					  toState="overlay"
+					  autoReverse="true">
+			<s:Fade targets="{[basebar, commentsPanel]}"
+					duration="500"/>
+		</s:Transition>
+	</s:transitions>
+	<s:states>
+		<s:State name="normal"/>
+		<s:State name="overlay"/>
+	</s:states>
+	<s:SWFLoader id="playerLoader"
+				 complete="onPlayerLoaderComplete(event)"
+				 source="{PLAYER_URL}"/>
+	<s:VGroup x="20"
+			  y="20"
+			  click="onDoubleClick(event)">
+		<s:Image source="@Embed(source='logo.png')"/>
+		<s:Label color="#CCCCCC"
+				 width="100%"
+				 id="subtitle"
+				 text="ROLLOVER FOR MORE / CLICK TO FULLSCREEN"
+				 textAlign="center"
+				 filters="{[rolloverShadow]}"
+				 fontSize="10"/>
+	</s:VGroup>
+	<views:BaseBar id="basebar"
+				   bottom="150"
+				   bottom.normal="-150"/>
+	<views:CommentsPanel id="commentsPanel"
+						 bottom="45"
+						 right.normal="-400"
+						 right="0"/>
+</s:Application>

@@ -1,0 +1,44 @@
+<div style="width: 100%; text-align: right; position:absolute;">
+<img src="img/logout.png" ng-click="logout()" ng-show="user.origin == 'facebook'" alt="LOGOUT"/>
+</div>
+<div class="chatContainer">
+    <img ng-src="{{user.pic}}" class="avatarpic" src="img/anon44.jpg" ng-click="login()" />
+    <br ng-show="user.origin != 'facebook'">
+    <a class="fb_signin_button" href="#/chat" onclick="FB.login()" ng-show="user.origin != 'facebook'"><img src="img/social_icons_buttons/facebook_signin.png"></a>
+    <br>
+    <div class="connectedAsContainer">
+        <p class="connectedAsText">CONNECTED AS</p>
+        <input type="text" style="text-align: center;" width="330" ng-model="user.author_name" placeholder="enter a pseudo." ng-disabled="user.origin == 'facebook'" value="(anon)">
+    </div>
+    <form ng-submit="insertComment()" ng-disabled="isSendingComment == true">
+            <div class="form-horizontal">
+                <input type="text" ng-model="comment.content" placeholder="Type here.">
+                <button id="replyBtn" class="btn"><i class="icon-reply"></i>  SEND</button>
+            </div>
+    </form>
+    <div class="youreCommentingLive" ng-show="currentview == 'live'">
+        LIVE CHAT
+    </div>
+    <div class="youreCommentingOnVideo" ng-show="currentview != 'live'">
+        COMMENT ON THIS VIDEO:<br>{{currentVideo.title.$t}}
+    </div>
+    <!--<button ng-click="getComments()" class="btn">REFRESH</button>-->
+    <div class="containerScroll">
+        <table ng-init="getComments()" class="table table-striped">
+            <tr ng-repeat="com in commentsData">
+                <td class="chatListRenderTd">
+                    <span><img ng-src="{{com.author_pic}}" class="chatRendererPic" width="60"/>
+                        <p>
+                            <i>{{com.timestamp}}</i><br>
+                            <b>{{com.author_name}}</b>
+                            <h3>{{com.content}}</h3>
+                        </p>
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="padding-bottom: 20px;" ng-show="isLoadingComments == true || isSendingComment == true">
+        <img src="img/257.gif" />
+    </div>
+</div>

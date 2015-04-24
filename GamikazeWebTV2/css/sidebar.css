@@ -1,0 +1,365 @@
+body .viewport .frame .menu {
+    height: 100%;
+    /* background-color: #3D6AA2; */
+}
+
+body .viewport .frame .menu.collapse {
+    float: left;
+    height: 100% !important;
+    width: auto;
+}
+
+body .viewport .frame .menu.collapse.height {
+    position: relative;
+    height: 0;
+    overflow: hidden;
+    -webkit-transition: height 0.25s ease;
+    -moz-transition: height 0.25s ease;
+    -o-transition: height 0.25s ease;
+    transition: height 0.25s ease;
+}
+
+body .viewport .frame .menu.collapse.width {
+    position: relative;
+    width: 0;
+    overflow: hidden;
+    -webkit-transition: width 0.25s ease;
+    -moz-transition: width 0.25s ease;
+    -o-transition: width 0.25s ease;
+    transition: width 0.25s ease;
+}
+
+body .viewport .frame .menu.collapse.in.width {
+    width: auto;
+}
+
+body .viewport .frame .menu.collapse.in.height {
+    height: auto;
+}
+
+/* SIDEBAR */
+body .viewport .frame .menu .collapse-inner {
+    position: relative;
+    width: 350px;
+    height: 100%;
+}
+
+@media screen and (max-width: 840px) {
+    body .viewport .frame .menu .collapse-inner {
+        position: relative;
+        width: 200px;
+        height: 100%;
+    }
+}
+
+body .viewport .frame .menu .navbar .navbar-inner {
+    text-align: center;
+    color: grey;
+    font-size: 1.2em;
+    line-height: 38px;
+}
+
+body .viewport .frame .view {
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body .viewport .frame .view .navbar .navbar-inner .btn-navbar {
+    display: block;
+    float: left;
+}
+
+body .viewport .frame .view #content {
+    /*margin: auto 15px;*/
+}
+
+#menu {
+    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.9);
+    background-color: #333333;
+    text-align: center;
+    /*-webkit-transition: width 0.1s linear;
+    -moz-transition: width 0.1s ease;
+    -o-transition: width 0.1s ease;
+    transition: width 0.1s ease;*/
+    /*transition-delay: 1s;*/
+    /*-webkit-transition-delay:0.1s;*/
+}
+
+@media (max-width: 979px) {
+    .nav-collapse {
+        clear: none;
+    }
+}
+
+/*.navbar {
+    position:relative;
+    margin-bottom: 0;
+}        */
+
+.btn {
+    border: none;
+}
+
+
+#menu0 button i {
+    line-height: 1.5em;
+}
+
+.first {
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+    height: 100%;
+    float: left;
+}
+
+.first ul {
+    top: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-stacked2 {
+    margin: 0px;
+}
+
+.nav-icons-left {
+    text-align: center;
+    width: 90px;
+    padding-top: 0px;
+}
+
+.btnLeftSidebar {
+    width: 90px;
+    height: 80px;
+    padding: 0;
+    background-image: -moz-linear-gradient(top, #171717, #080808);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#171717), to(#080808));
+    background-image: -webkit-linear-gradient(top, #171717, #080808);
+    background-image: -o-linear-gradient(top, #171717, #080808);
+    background-image: linear-gradient(to bottom, #171717, #080808);
+    background-repeat: repeat-x;
+    color: #a1a1a1;
+}
+
+.btnLeftSidebar.btn:active, .btnLeftSidebar.btn.active, .btnLeftSidebar.btn:hover, .btnLeftSidebar.btn.hover {
+    background-color: #ffff00;
+}
+
+@media screen and (max-width: 840px) {
+    .btnLeftSidebar {
+        width: 90px;
+        height: 45px;
+        font-size: 10px;
+        overflow: hidden;
+    }
+    .btnLeftSidebar .btn:hover,.btn:focus {
+        background-position: 0 -30px;
+    }
+}
+
+.btn:hover,.btn:focus {
+    background-position: 0 -80px;
+    -webkit-transition: background-position 0.2s linear;
+    -moz-transition: background-position 0.2s linear;
+    -o-transition: background-position 0.2s linear;
+    transition: background-position 0.2s linear;
+}
+
+#localeSelectDiv {
+    margin: 10px;
+}
+
+/* CHAT */
+
+/*#container {*/
+    /*-webkit-box-shadow: inset 0px 0px 10px 4px #cccccc;*/
+    /*box-shadow: inset 0px 0px 10px 4px #cccccc;*/
+/*}*/
+
+/*.chatContainer input{*/
+    /*width: 50%;*/
+/*}*/
+
+.chatContainer{
+    height: 100%;
+}
+
+.table-striped tbody > tr:nth-child(odd) > td, .table-striped tbody > tr:nth-child(odd) > th {
+    background-color: #0f0d0b;
+}
+
+.chatContainer td {
+    border-top: 1px solid #3f3f3f;
+    font-size: 1em;
+    padding: 0;
+}
+
+.chatContainer pre {
+    background-color: #282828;
+    color: #bdb7b7;
+    font-size: 12px;
+    line-height: 18px;
+    padding: 5px;
+}
+
+a.fb_signin_button {
+    background: url(../img/social_icons_buttons/facebook_signin.png) no-repeat 100px 0;
+    height: 23px;
+    text-align: center;
+    display: block;
+    text-indent: -9999px;
+}
+
+a.fb_signin_button:hover { background-position: 100px -23px; }
+a.fb_signin_button:active { background-position: 100px -46px; }
+
+
+#container .chatListRenderTd {
+    max-width: 330px;
+    background-color: #1a1a1a;
+    color: white;
+    border-top: 1px solid #3f3f3f;
+}
+
+#container .chatListRenderTd P{
+    margin-top: 2px;
+    margin-right: 5px;
+    margin-left: 10px;
+    color: #808080;
+}
+
+#container .chatListRenderTd I{
+    font-size: 10px;
+}
+
+#container .chatListRenderTd B{
+    color: #CCCCCC;
+    font-size: 14px;
+    font-family: 'Alef', sans-serif;
+    letter-spacing: -1px;
+}
+
+#container .chatListRenderTd H3{
+    margin-top: -5px;
+    margin-bottom: 0;
+    margin-right: 10px;
+    margin-left: 10px;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+#container .youreCommentingLive
+{
+    width: 100%;
+    background-color: #000000;
+    color: #ffff00;
+    text-align: center;
+    font-family: 'Alef', sans-serif;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    padding-top: 0px;
+    padding-bottom: -1px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#container .youreCommentingOnVideo
+{
+    color: #ffff00;
+    font-size: 12px;
+    line-height: 16px;
+    text-transform: uppercase;
+    text-align: center;
+    font-family: 'Alef', sans-serif;
+    padding: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 0;
+}
+
+#container form
+{
+    margin-bottom: 10px;
+}
+
+.chatRendererPic {
+    float:left;
+    min-width: 60px;
+    width: 60px;
+    margin-right: 12px;
+    margin-bottom: 2px;
+    margin-left: 10px;
+}
+
+.avatarpic {
+    width: 60px;
+    border: 4px solid #ffffff;
+    box-shadow:0px 8px 15px #000000;
+    margin-top: 12px;
+    margin-bottom: 14px;
+}
+
+.connectedAsText{
+    font-size: 10px;
+    line-height: 8px;
+    color: white;
+}
+
+.connectedAsContainer {
+    width: 100%;
+    float: left;
+}
+
+
+@media screen and (max-width: 840px) {
+    a.fb_signin_button { background-position: 25px -23px; }
+    a.fb_signin_button:hover { background-position: 25px -23px; }
+    a.fb_signin_button:active { background-position: 25px -46px; }
+    .avatarpic {
+        height: 0;
+        visibility: hidden;
+        padding-bottom: 0;
+    }
+    .btn {
+        margin-top: 10px;
+    }
+    #container .chatListRenderTd {
+        max-width: 140px;
+    }
+    #container .chatListRenderTd P{
+        margin-right: 5px;
+        font-size: 14px;
+        width: 100%;
+        color: #ffffff;
+    }
+    #container .chatListRenderTd I{
+        font-size: 10px;
+        color: #CCCCCC;
+    }
+    #container .chatListRenderTd B{
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-right: 5px;
+        font-size: 10px;
+    }
+    #container .chatListRenderTd H3{
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-right: 5px;
+        margin-left: 5px;
+        font-size: 16px;
+        line-height: 18px;
+    }
+    .chatRendererPic {
+        min-width: 30px;
+        width: 30px;
+        margin-right: 12px;
+        margin-bottom: 2px;
+        margin-left: 0;
+    }
+    #container .table th, .table td {
+        line-height: 12px;
+    }
+}
