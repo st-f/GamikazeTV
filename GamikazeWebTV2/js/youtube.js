@@ -1,10 +1,3 @@
-/**
- * Created with IntelliJ IDEA.
- * User: stephaneschittly
- * Date: 25/06/13
- * Time: 23:18
- * To change this template use File | Settings | File Templates.
- */
 'use strict';
 
 angular.module('gamikaze.youtube', []);
@@ -14,13 +7,11 @@ function YoutubeCtrl($scope, $http, $window) {
     $scope.playlistTotalResults = 0;
     $scope.startIndex = 1;
     $scope.playlistLoaded = false;
-    //$scope.playlistID = "PLVEH4RPM7Hla9IFDfE-WAt0KK01jDjvCF";
     $scope.playlistID = "PLVEH4RPM7Hla0Y1cCa2lJuKLlHQaFUS6I";
-    $scope.devKey = "AI39si4kkCWsMNn5raKjOWJbHN5dgbPrN4DRn1J958-_xpf9qLgP-elw14fm_RiKVcqCsMhlOivo6TJKOItDOjYiW8boBu8Z8w";
+    $scope.devKey = "AIzaSyCHprHGVj84zeUpDcSFzEfMECH6bEVu3d4";
     $scope.isSearchingYoutube = false;
     $scope.videoSearchResults = [];
     $scope.searchTerm = "";
-    //console.log("YoutubeCtrl playlistID: "+$scope.playlistID);
 
     $scope.$on('$viewContentLoaded', function () {
         window.onYouTubeIframeAPIReady = function () {
@@ -227,10 +218,12 @@ function YoutubeCtrl($scope, $http, $window) {
     }
 
     $scope.loadPlaylist = function () {
-        var url = "http://gdata.youtube.com/feeds/api/playlists/" + $scope.playlistID + "?v=2&max-results=50&start-index=" + $scope.startIndex + "&alt=json-in-script&callback=JSON_CALLBACK&key=" + $scope.devKey;
+        //var url = "http://gdata.youtube.com/feeds/api/playlists/" + $scope.playlistID + "?v=2&max-results=50&start-index=" + $scope.startIndex + "&alt=json-in-script&callback=JSON_CALLBACK&key=" + $scope.devKey;
+        var url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=" + $scope.playlistID + "&key=" + $scope.devKey + "&callback=JSON_CALLBACK";
         console.log("loadPlaylist ID: " + $scope.playlistID);
         console.log("loadPlaylist URL: " + url);
         $http.jsonp(url).success(function (data) {
+            console.log("loadPlaylist URL: DATA: " + JSON.stringify(data));
             if (data.feed.entry.length > 0) {
                 $scope.playlistTotalResults = data.feed.openSearch$totalResults.$t;
                 $scope.youtubeResult = $scope.youtubeResult.concat(data.feed.entry);
@@ -256,6 +249,7 @@ function YoutubeCtrl($scope, $http, $window) {
                 //console.log("error");
             }
         });
+        console.log("loadPlaylist URL: " + url);
     };
 
     $scope.loadVideoInfo = function (videoID, andSetToCurrentVideo) {
@@ -374,7 +368,7 @@ function YoutubeCtrl($scope, $http, $window) {
         var url = "http://gdata.youtube.com/feeds/api/videos?q=" + term + "&author=TVGamikaze&max-results=50&alt=json-in-script&callback=JSON_CALLBACK";
         $http.jsonp(url).success(function (data) {
             $scope.isSearchingYoutube = false;
-            //console.log("SEARCH FOUND "+data.feed.entry.length+" VIDEOS.");
+            console.log("SEARCH FOUND "+data.feed.entry.length+" VIDEOS.");
             if (data.feed.entry.length > 0) {
                 for (var i = 0; i < data.feed.entry.length; i++) {
                     var video = data.feed.entry[i];
