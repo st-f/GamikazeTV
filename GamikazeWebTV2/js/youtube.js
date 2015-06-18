@@ -53,8 +53,8 @@ function YoutubeCtrl($scope, $http, $window) {
         if (!$scope.currentVideo) {
             return 100;
         }
-        //console.log("getRemainingTime");
-        //console.log($scope.currentVideo);
+        console.log("getRemainingTime");
+        console.log($scope.currentVideo);
         return parseInt($scope.currentVideo.media$group.yt$duration.seconds - $scope.player.getCurrentTime());
     }
 
@@ -223,18 +223,18 @@ function YoutubeCtrl($scope, $http, $window) {
         console.log("loadPlaylist ID: " + $scope.playlistID);
         console.log("loadPlaylist URL: " + url);
         $http.jsonp(url).success(function (data) {
-            console.log("loadPlaylist URL: DATA: " + JSON.stringify(data));
-            if (data.feed.entry.length > 0) {
-                $scope.playlistTotalResults = data.feed.openSearch$totalResults.$t;
-                $scope.youtubeResult = $scope.youtubeResult.concat(data.feed.entry);
+            console.log("loadPlaylist URL: data: ");
+            console.log(data.items);
+            if (data.items.length > 0) {
+                $scope.playlistTotalResults = data.pageInfo.totalResults;
+                $scope.youtubeResult = $scope.youtubeResult.concat(data.items);
                 $scope.startIndex += 50;
                 if ($scope.startIndex < $scope.playlistTotalResults) {
                     //console.log("loading another part of the playlist... $scope.startIndex: " + $scope.startIndex);
                     $scope.loadPlaylist();
                 }
                 else {
-                    console.log("PLAYLIST LOADED.");
-                    console.log(data.feed);
+                    console.log("Playlist loaded.");
                     $scope.playlistLoaded = true;
                     if (!$scope.videoFromURL) {
                         $scope.setLive();
@@ -254,7 +254,7 @@ function YoutubeCtrl($scope, $http, $window) {
 
     $scope.loadVideoInfo = function (videoID, andSetToCurrentVideo) {
         console.log("loadVideoInfo: " + videoID);
-        var url = "http://gdata.youtube.com/feeds/api/videos/" + videoID + "?v=2&alt=json-in-script&callback=JSON_CALLBACK";
+        var url = "https://www.googleapis.com/youtube/v3/videos?id=" + videoID + "&alt=json-in-script&callback=JSON_CALLBACK";
         $http.jsonp(url).success(function (data) {
             if (andSetToCurrentVideo) {
                 $scope.currentVideo = data.entry;
@@ -299,7 +299,7 @@ function YoutubeCtrl($scope, $http, $window) {
 
     $scope.loadCommentAuthorData = function (_url, commentIndex) {
         $scope.isLoadingComments = true;
-        var url = _url + "?v=2&alt=json-in-script&callback=JSON_CALLBACK";
+        var url = _url + "&callback=JSON_CALLBACK";
         //console.log("======> loadCommentAuthorData: "+url);
         $http.jsonp(url).success(function (data) {
             $scope.isLoadingComments = false;
@@ -336,7 +336,7 @@ function YoutubeCtrl($scope, $http, $window) {
 
     $scope.loadVideo = function (video) {
         resizeWin();
-        var videoID = video.media$group.yt$videoid.$t;
+        var videoID = video.snippet.resourceId.videoId;
         track(videoID);
         console.log("loadVideo()");
         if ($scope.currentVideoID != videoID) {
@@ -365,17 +365,16 @@ function YoutubeCtrl($scope, $http, $window) {
         }
         $scope.videoSearchResults = [];
         $scope.isSearchingYoutube = true;
-        var url = "http://gdata.youtube.com/feeds/api/videos?q=" + term + "&author=TVGamikaze&max-results=50&alt=json-in-script&callback=JSON_CALLBACK";
+        var url = "https://www.googleapis.com/youtube/v3/videos?q=" + term + "&author=TVGamikaze&part=snippet&max-results=50&callback=JSON_CALLBACK";
         $http.jsonp(url).success(function (data) {
+            console.log("SEARCH DONE.");
+            console.log(data);
             $scope.isSearchingYoutube = false;
-            console.log("SEARCH FOUND "+data.feed.entry.length+" VIDEOS.");
-            if (data.feed.entry.length > 0) {
-                for (var i = 0; i < data.feed.entry.length; i++) {
-                    var video = data.feed.entry[i];
+            console.log("SEARCH FOUND "+data.items.length+" VIDEOS.");
+            if (data.items.length > 0) {
+                for (var i = 0; i < data.items.length; i++) {
+                    var video = data.items[i];
                     console.log(video);
-                    var idArray = video.id.$t.split("/");
-                    var videoID = idArray[idArray.length - 1];
-                    video.media$group.yt$videoid = {$t: videoID};
                     $scope.videoSearchResults.push(video);
                 }
                 //console.log("SEARCH FOUND videoSearchResults : "+$scope.videoSearchResults.length+" VIDEOS.");
