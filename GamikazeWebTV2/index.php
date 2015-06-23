@@ -125,7 +125,7 @@
                                 <!--<div class="amazonBuyButton">
                                 <div class="amazonBuyButton">
                                     <SCRIPT charset="utf-8" type="text/javascript" src="http://ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822%2FUS%2Fgamikaze-20%2F8005%2F188679a9-ed32-4fe5-97f9-acf74f9d2f52"> </SCRIPT> <NOSCRIPT><A HREF="http://ws-na.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&MarketPlace=US&ID=V20070822%2FUS%2Fgamikaze-20%2F8005%2F188679a9-ed32-4fe5-97f9-acf74f9d2f52&Operation=NoScript">Amazon.com Widgets</A></NOSCRIPT>
-                                    <a type="amzn" search="{{currentVideo.media$group.media$description.$t}}" category="video games">
+                                    <a type="amzn" search="{{currentVideo.snippet.description}}" category="video games">
                                         <img src="img/buy-now-1.gif">
                                     </a>
                                 </div>-->

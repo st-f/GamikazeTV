@@ -5,8 +5,9 @@ angular.module('gamikaze.youtube', []);
 function YoutubeCtrl($scope, $http, $window) {
     $scope.youtubeResult = [];
     $scope.playlistTotalResults = 0;
-    $scope.startIndex = 1;
+    $scope.startIndex = 0;
     $scope.playlistLoaded = false;
+    $scope.playlistDuration = 0;
     $scope.playlistID = "PLVEH4RPM7Hla0Y1cCa2lJuKLlHQaFUS6I";
     $scope.devKey = "AIzaSyCHprHGVj84zeUpDcSFzEfMECH6bEVu3d4";
     $scope.isSearchingYoutube = false;
@@ -55,7 +56,7 @@ function YoutubeCtrl($scope, $http, $window) {
         }
         console.log("getRemainingTime");
         console.log($scope.currentVideo);
-        return parseInt($scope.currentVideo.media$group.yt$duration.seconds - $scope.player.getCurrentTime());
+        return parseInt($scope.currentVideo.snippet.duration - $scope.player.getCurrentTime());
     }
 
     $scope.bottombarLock = 1;
@@ -218,39 +219,53 @@ function YoutubeCtrl($scope, $http, $window) {
     }
 
     $scope.loadPlaylist = function () {
-        //var url = "http://gdata.youtube.com/feeds/api/playlists/" + $scope.playlistID + "?v=2&max-results=50&start-index=" + $scope.startIndex + "&alt=json-in-script&callback=JSON_CALLBACK&key=" + $scope.devKey;
         var url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=" + $scope.playlistID + "&key=" + $scope.devKey + "&callback=JSON_CALLBACK";
-        console.log("loadPlaylist ID: " + $scope.playlistID);
-        console.log("loadPlaylist URL: " + url);
         $http.jsonp(url).success(function (data) {
-            console.log("loadPlaylist URL: data: ");
-            console.log(data.items);
             if (data.items.length > 0) {
                 $scope.playlistTotalResults = data.pageInfo.totalResults;
-                $scope.youtubeResult = $scope.youtubeResult.concat(data.items);
-                $scope.startIndex += 50;
-                if ($scope.startIndex < $scope.playlistTotalResults) {
-                    //console.log("loading another part of the playlist... $scope.startIndex: " + $scope.startIndex);
-                    $scope.loadPlaylist();
-                }
-                else {
-                    console.log("Playlist loaded.");
-                    $scope.playlistLoaded = true;
-                    if (!$scope.videoFromURL) {
-                        $scope.setLive();
-                    }
-                    else {
-                        //$('#menu').collapse('hide');
-                        $scope.loadVideoInfo($scope.currentVideoID, true);
-                    }
-                }
-            }
-            else {
-                //console.log("error");
+                $scope.youtubeResult=$scope.youtubeResult.concat(data.items);
+                $scope.loadVideosDurations(data, $scope, $http);
+            } else {
+                console.log("error - no items in playlist");
             }
         });
         console.log("loadPlaylist URL: " + url);
     };
+
+    $scope.loadVideosDurations = function(data, $scope, $http) {
+        //getting videos durations
+        var durationReqIdsString = "";
+        for (var i = 0; i < data.items.length; i++) {
+            durationReqIdsString += data.items[i].snippet.resourceId.videoId + ",";
+        }
+        durationReqIdsString = durationReqIdsString.substring(0, durationReqIdsString.length - 1);
+        var videosDurationURL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=" + durationReqIdsString + "&fields=items%2FcontentDetails&key=" + $scope.devKey + "&callback=JSON_CALLBACK";
+        //console.log("req string: " + durationReqIdsString);
+        $http.jsonp(videosDurationURL).success(function (data) {
+            for (var i = 0; i < data.items.length; i++) {
+                var realIndex = (i + $scope.startIndex);
+                var duration = data.items[i].contentDetails.duration;
+                var parseDuration = parseDuration2(duration);
+                $scope.playlistDuration += parseDuration;
+                //console.log(realIndex + " duration: " + parseDuration);
+                $scope.youtubeResult[realIndex].snippet.duration = parseDuration;
+            }
+            //end getting videos duration
+            if ($scope.startIndex < $scope.playlistTotalResults) {
+                $scope.startIndex += data.items.length;
+                $scope.loadPlaylist();
+            } else {
+                console.log("Playlist loaded.");
+                $scope.playlistLoaded = true;
+                if (!$scope.videoFromURL) {
+                    $scope.setLive();
+                }
+                else {
+                    $scope.loadVideoInfo($scope.currentVideoID, true);
+                }
+            }
+        });
+    }
 
     $scope.loadVideoInfo = function (videoID, andSetToCurrentVideo) {
         console.log("loadVideoInfo: " + videoID);
@@ -258,7 +273,7 @@ function YoutubeCtrl($scope, $http, $window) {
         $http.jsonp(url).success(function (data) {
             if (andSetToCurrentVideo) {
                 $scope.currentVideo = data.entry;
-                $scope.currentVideoID = $scope.currentVideo.media$group.yt$videoid.$t;
+                $scope.currentVideoID = $scope.currentVideo.snippet.resourceId.videoId;
                 $scope.loadVideo($scope.currentVideo);
                 console.log("SINGLE VIDEO RETRIEVED: $scope.currentVideo: ");
                 console.log($scope.currentVideo);
@@ -314,12 +329,14 @@ function YoutubeCtrl($scope, $http, $window) {
             console.error("setLive() : playlist empty!");
             return;
         }
-        var liveData = getPlaylistPosition($scope.youtubeResult);
+        var liveData = getPlaylistPosition($scope.youtubeResult, $scope.playlistDuration);
         var videoIndex = liveData[0];
-        if ($scope.currentVideoID == $scope.youtubeResult[videoIndex].media$group.yt$videoid.$t) {
+        console.log("setLive");
+        console.log($scope.youtubeResult[videoIndex]);
+        if ($scope.currentVideoID == $scope.youtubeResult[videoIndex].snippet.resourceId.videoId) {
             return;
         }
-        $scope.currentVideoID = $scope.youtubeResult[videoIndex].media$group.yt$videoid.$t;
+        $scope.currentVideoID = $scope.youtubeResult[videoIndex].snippet.resourceId.videoId;
         $scope.currentVideo = $scope.youtubeResult[videoIndex];
         $scope.videoStartPosition = liveData[1];
         if (!$scope.player) {

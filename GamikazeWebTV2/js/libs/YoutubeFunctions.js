@@ -48,13 +48,13 @@ function getUrlVars() {
 
 function getPlaylistDuration(playlist) {
     var ret = 0;
-    //console.log("getPlaylistDuration: " + playlist.length + " videos");
-    //TODO: WHAT TO DO WHEN YOUTUBE DOESNT RETURN A VIDEO DURATION? RARE BUT IT HAPPENS
+    console.log("getPlaylistDuration: " + playlist.length + " videos");
     var videoDuration = 180;
     for (var index = 0; index < playlist.length; index++) {
-        if (playlist[index].media$group.yt$duration) {
-            videoDuration = playlist[index].media$group.yt$duration.seconds;
-           // console.log(index + " > " + playlist[index].title.$t + " duration: " + videoDuration);
+        if (playlist[index].contentDetails.duration) {
+            console.log(playlist[index].snippet);
+            videoDuration = playlist[index].snippet.duration.seconds;
+            //console.log(index + " > " + playlist[index].title.$t + " duration: " + videoDuration);
         }
         else {
             videoDuration = 180;
@@ -64,9 +64,9 @@ function getPlaylistDuration(playlist) {
     return ret;
 }
 
-function getPlaylistPosition(playlist) {
+function getPlaylistPosition(playlist, duration) {
     var ret = [];
-    var playlistDuration = getPlaylistDuration(playlist);
+    var playlistDuration = duration;
     var videoDuration = 180;
     var currentTime = new Date();
     var currentTimeAtStartOfDay = new Date();
@@ -81,8 +81,8 @@ function getPlaylistPosition(playlist) {
     }
     var currentCumulativeDuration = 0;
     for (var index = 0; index < playlist.length; index++) {
-        if (playlist[index].media$group.yt$duration) {
-            videoDuration = playlist[index].media$group.yt$duration.seconds;
+        if (playlist[index].snippet.duration) {
+            videoDuration = playlist[index].snippet.duration;
         }
         else {
             videoDuration = 180;
@@ -103,8 +103,8 @@ function getVideoInPlaylist(playlist, videoid)
 {
     for (var index = 0; index < playlist.length; index++)
     {
-        //console.log("comparing "+playlist[index].media$group.yt$videoid.$t+" to "+videoid);
-        if (playlist[index].media$group.yt$videoid.$t == videoid) {
+        //console.log("comparing "+playlist[index].snippet.resourceId.videoId+" to "+videoid);
+        if (playlist[index].snippet.resourceId.videoId == videoid) {
             //console.log("found: ");
             //console.log(playlist[index]);
             return playlist[index];
@@ -118,7 +118,7 @@ function getNextVideoInPlaylist(playlist, currentVideoID)
     var tmpIndex = -1;
     for (var index = 0; index < playlist.length; index++)
     {
-        if (playlist[index].media$group.yt$videoid.$t == currentVideoID) {
+        if (playlist[index].snippet.resourceId.videoId == currentVideoID) {
             //console.log("found: ");
             //console.log(playlist[index]);
             tmpIndex = index;
@@ -136,4 +136,34 @@ function getNextVideoInPlaylist(playlist, currentVideoID)
         }
     }
     return null;
+}
+
+function parseDuration2(duration) {
+    var matches = duration.match(/[0-9]+[HMS]/g);
+    var seconds = 0;
+    matches.forEach(function (part) {
+        var unit = part.charAt(part.length-1);
+        var amount = parseInt(part.slice(0,-1));
+        switch (unit) {
+            case 'H':
+                seconds += amount*60*60;
+                break;
+            case 'M':
+                seconds += amount*60;
+                break;
+            case 'S':
+                seconds += amount;
+                break;
+            default:
+        }
+    });
+    return seconds;
+}
+
+function appendAll(dest, src) {
+    var n;
+    for (n = 0; n < src.length; ++n) {
+        dest.push(src[n]);
+    }
+    return dest;
 }

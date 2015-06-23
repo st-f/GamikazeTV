@@ -11,10 +11,10 @@
 </div>
 <div class="youtubeDiv containerScroll">
     <table class="table table-striped">
-        <tr id="{{vid.media$group.yt$videoid.$t}}" ng-repeat="vid in videoSearchResults" data-ng-click="loadVideo(vid)">
-            <td ng-class="getSelectedVideo(vid.media$group.yt$videoid.$t)" class="youtubeListRenderTd">
-                <img class="youtubeListThumb" ng-src="{{vid.media$group.media$thumbnail[0].url}}">
-                <span>{{vid.title.$t}}</span>
+        <tr id="{{vid.snippet.resourceId.videoId}}" ng-repeat="vid in videoSearchResults" data-ng-click="loadVideo(vid)">
+            <td ng-class="getSelectedVideo(vid.snippet.resourceId.videoId)" class="youtubeListRenderTd">
+                <img class="youtubeListThumb" ng-src="{{vid.snippet.thumbnail.medium.url}}">
+                <span>{{vid.snippet.title}}</span>
             </td>
         </tr>
     </table>
