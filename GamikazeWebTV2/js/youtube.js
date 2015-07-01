@@ -9,7 +9,8 @@ function YoutubeCtrl($scope, $http, $window) {
     $scope.playlistLoaded = false;
     $scope.playlistDuration = 0;
     $scope.playlistID = "PLVEH4RPM7Hla0Y1cCa2lJuKLlHQaFUS6I";
-    $scope.devKey = "AIzaSyCHprHGVj84zeUpDcSFzEfMECH6bEVu3d4";
+    $scope.channelID = "UC0CsEmczB4A-JbsOYAJB0cQ";
+    $scope.APIKey = "AIzaSyDNu9W1Bd_hlR1r0M4PXPSp-S8ulVF5xWk";
     $scope.isSearchingYoutube = false;
     $scope.videoSearchResults = [];
     $scope.searchTerm = "";
@@ -34,7 +35,7 @@ function YoutubeCtrl($scope, $http, $window) {
             $(bottombarHelper).fadeIn(200).delay(_duration).fadeOut(200);
         }
         else if (bar == "nowplaying") {
-            console.warn("showNotificationBar: currentVideo.title.$t: ");
+            console.warn("showNotificationBar: currentVideo: ");
             console.warn($scope.currentVideo);
             $(bottombarHelper).fadeIn(500).delay(duration).fadeOut(500);
         }
@@ -54,8 +55,9 @@ function YoutubeCtrl($scope, $http, $window) {
         if (!$scope.currentVideo) {
             return 100;
         }
-        console.log("getRemainingTime");
-        console.log($scope.currentVideo);
+        //TODO: calc error here. Probably the wrong currentVideo duration after parsing data
+        //console.log("GETREMAININGVIDEOTIME: DURATION "+$scope.currentVideo.snippet.duration);
+        //console.log("GETREMAININGVIDEOTIME: CURRENT "+$scope.player.getCurrentTime());
         return parseInt($scope.currentVideo.snippet.duration - $scope.player.getCurrentTime());
     }
 
@@ -219,7 +221,7 @@ function YoutubeCtrl($scope, $http, $window) {
     }
 
     $scope.loadPlaylist = function () {
-        var url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=" + $scope.playlistID + "&key=" + $scope.devKey + "&callback=JSON_CALLBACK";
+        var url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=" + $scope.playlistID + "&key=" + $scope.APIKey + "&callback=JSON_CALLBACK";
         $http.jsonp(url).success(function (data) {
             if (data.items.length > 0) {
                 $scope.playlistTotalResults = data.pageInfo.totalResults;
@@ -239,7 +241,7 @@ function YoutubeCtrl($scope, $http, $window) {
             durationReqIdsString += data.items[i].snippet.resourceId.videoId + ",";
         }
         durationReqIdsString = durationReqIdsString.substring(0, durationReqIdsString.length - 1);
-        var videosDurationURL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=" + durationReqIdsString + "&fields=items%2FcontentDetails&key=" + $scope.devKey + "&callback=JSON_CALLBACK";
+        var videosDurationURL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=" + durationReqIdsString + "&fields=items%2FcontentDetails&key=" + $scope.APIKey + "&callback=JSON_CALLBACK";
         //console.log("req string: " + durationReqIdsString);
         $http.jsonp(videosDurationURL).success(function (data) {
             for (var i = 0; i < data.items.length; i++) {
@@ -382,7 +384,7 @@ function YoutubeCtrl($scope, $http, $window) {
         }
         $scope.videoSearchResults = [];
         $scope.isSearchingYoutube = true;
-        var url = "https://www.googleapis.com/youtube/v3/videos?q=" + term + "&author=TVGamikaze&part=snippet&max-results=50&callback=JSON_CALLBACK";
+        var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + term + "&playlistId="+$scope.playlistID+"&max-results=50&key="+$scope.APIKey+"&callback=JSON_CALLBACK";
         $http.jsonp(url).success(function (data) {
             console.log("SEARCH DONE.");
             console.log(data);

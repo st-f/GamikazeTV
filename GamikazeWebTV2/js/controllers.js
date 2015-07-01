@@ -21,7 +21,7 @@ function ShareViewCtrl($scope, Facebook) {
 
     //TWITTER
     $scope.tweetVideo = function () {
-        var text = encodeURIComponent('#GTV_' + $scope.currentVideoID + ' - Watch ' + $scope.currentVideo.title.$t + ' on Gamikaze.TV: ');
+        var text = encodeURIComponent('#GTV_' + $scope.currentVideoID + ' - Watch ' + $scope.currentVideo.snippet.title + ' on Gamikaze.TV: ');
         //We get the URL of the link
         var loc = encodeURIComponent('@GamikazeTV - http://gamikaze.tv/#/videos:' + $scope.currentVideoID);
         //var via = "Gamikaze.TV"
@@ -42,7 +42,7 @@ function ShareViewCtrl($scope, Facebook) {
 
     //EMAIL
     $scope.sendVideoByEmail = function () {
-        var text = encodeURIComponent($scope.currentVideo.title.$t + ' on Gamikaze.TV.');
+        var text = encodeURIComponent($scope.currentVideo.snippet.title + ' on Gamikaze.TV.');
         //We get the URL of the link
         var url = 'http://gamikaze.tv/#/videos:' + $scope.currentVideoID;
         var loc = encodeURIComponent('<a href="' + url + '">' + url + '</a>');
@@ -106,7 +106,7 @@ function CommentsCtrl($scope, $http, $window) {
         console.log("CURRENT VIDEO CHANGED. " + newval + " old: " + oldval + " $scope.currentView: " + $scope.currentview);
         if (newval != oldval && $scope.currentview != 'live') {
             $scope.commentsData = [];
-            $window.document.title = $scope.currentVideo.title.$t + "Gamikaze.TV - The Real Gaming TV, 24/7. Updated daily.";
+            $window.document.title = $scope.currentVideo.snippet.title + "Gamikaze.TV - The Real Gaming TV, 24/7. Updated daily.";
             $scope.getComments();
             if($scope.getCommentsTimer == 0) {
                 setInterval(function () {

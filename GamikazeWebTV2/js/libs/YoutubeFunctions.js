@@ -5,8 +5,6 @@
  * Time: 20:49
  * To change this template use File | Settings | File Templates.
  */
-//var playlistId = 'PLVEH4RPM7HlaRnOhnwoP62vWikMGJdwa9';
-//var playlistURL = 'http://gdata.youtube.com/feeds/api/playlists/' + playlistId + '?v=2&max-results=50&alt=json';
 var videoIndex;
 var videoId;
 var videoPosition;

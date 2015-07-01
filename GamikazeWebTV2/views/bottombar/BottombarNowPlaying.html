@@ -1,9 +1,9 @@
 <div id="bottomBarNowPlaying" class="bottombar">
     <div class="bottombarFloatLeft bottombarImageDiv">
-        <img src="{{currentVideo.snippet.thumbnail.medium.url}}" class="img-polaroid ytthumbnail">
+        <img src="{{currentVideo.snippet.thumbnails.medium.url}}" class="img-polaroid ytthumbnail">
     </div>
     <div class="bottombarTextDiv">
-        <h2>{{currentVideo.title.$t}}</h2>
+        <h2>{{currentVideo.snippet.title}}</h2>
         <p>{{currentVideo.snippet.description}}</p>
         <!-- {{currentVideo.yt$statistics.viewCount}} -->
     </div>

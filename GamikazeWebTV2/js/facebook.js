@@ -45,14 +45,14 @@ app.factory('Facebook', function ($rootScope) {
             var obj = {
                 method: 'feed',
                 link: 'http://gamikaze.tv/?'+videoID,
-                picture: video.snippet.thumbnail.medium.url,
+                picture: video.snippet.thumbnails.medium.url,
                 source: 'http://www.youtube.com/v/'+videoID+'?autohide=1&amp;version=3',
                 /*media:[{"type": "flash",
                  "swfsrc": 'http://www.youtube.com/v/'+videoID+'?autohide=1&amp;version=3',
                  "imgsrc": video.snippet.thumbnail.medium.url,
                  "expanded_width": "500",
                  "expanded_height": "285"}],*/
-                name: video.title.$t+' on Gamikaze.TV',
+                name: video.snippet.title+' on Gamikaze.TV',
                 caption: 'http://www.gamikaze.tv',
                 description: video.snippet.description
             };
@@ -67,9 +67,9 @@ app.factory('Facebook', function ($rootScope) {
             var obj2 = {
                 method: 'send',
                 link: 'http://gamikaze.tv/?'+videoID,
-                picture: video.snippet.thumbnail.medium.url,
+                picture: video.snippet.thumbnails.medium.url,
                 source: 'http://www.youtube.com/v/'+videoID+'?autohide=1&amp;version=3',
-                name: video.title.$t+' on Gamikaze.TV',
+                name: video.snippet.title+' on Gamikaze.TV',
                 caption: 'http://www.gamikaze.tv',
                 description: video.snippet.description
             };
